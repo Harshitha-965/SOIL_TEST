@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Analysis Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            flex: 1 1 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card strong {
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+
+        .graph {
+            margin: 30px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        /* Soil Score Indicator */
+        .soil-score-indicator {
+            margin: 20px 0;
+            padding: 10px;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .soil-score-indicator.green {
+            background-color: #28a745;
+        }
+
+        .soil-score-indicator.yellow {
+            background-color: #ffc107;
+        }
+
+        .soil-score-indicator.red {
+            background-color: #dc3545;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Soil Analysis Results</h1>
+
+    <div class="content">
+        <!-- Soil Score -->
+        <div class="card">
+            <strong>Soil Score:</strong>
+            <div class="soil-score-indicator {{ soil_suitability_class }}">{{ soil_score }}</div>
+        </div>
+
+        <!-- Fertilizer Recommendation -->
+        <div class="card">
+            <strong>Recommended Fertilizer:</strong>
+            <p>{{ recommended_fertilizer }}</p>
+        </div>
+
+        <!-- Crop Recommendation -->
+        <div class="card">
+            <strong>Recommended Crop:</strong>
+            <p>{{ recommended_crop }}</p>
+        </div>
+    </div>
+
+    <!-- Soil Nutrients Chart -->
+    <div class="graph">
+        <canvas id="nutrientChart"></canvas>
+    </div>
+
+    <!-- Soil Score Visualization -->
+    <div class="graph">
+        <canvas id="soilScoreChart"></canvas>
+    </div>
+</div>
+
+<script>
+    // Soil Suitability Class Logic (Optional)
+    document.querySelector('.soil-score-indicator').classList.add(
+        '{{soil_score}}' > 70 ? 'green' : '{{ soil_score }}' > 40 ? 'yellow' : 'red'
+    );
+
+    // Nutrient Chart
+    const nutrientChartCtx = document.getElementById('nutrientChart').getContext('2d');
+    new Chart(nutrientChartCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Nitrogen', 'Phosphorus', 'Potassium'],
+            datasets: [{
+                label: 'Nutrient Levels (mg/kg)',
+                data: ['{{ npk.Nitrogen }}', '{{ npk.Phosphorus }}', '{{ npk.Potassium }}'],
+                backgroundColor: ['#36a2eb', '#ff6384', '#4bc0c0'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Concentration (mg/kg)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Soil Score Chart
+    const soilScoreChartCtx = document.getElementById('soilScoreChart').getContext('2d');
+    new Chart(soilScoreChartCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Soil Score', 'Remaining'],
+            datasets: [{
+                data: ['{{ soil_score }}', 100 - '{{ soil_score }}'],
+                backgroundColor: ['#28a745', '#e0e0e0'],
+                hoverBackgroundColor: ['#28a745', '#cccccc']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
