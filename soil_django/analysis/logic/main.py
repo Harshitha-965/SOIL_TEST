@@ -1,4 +1,9 @@
 # analysis/logic/main.py
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'soil_django.settings')
+django.setup()
 from analysis.logic.crop_rec import get_crop_recommendation, get_crop_accuracy
 from analysis.logic.fertilizer import recommend_fertilizer, get_fertilizer_accuracy
 from analysis.logic.soil_analysis import (
@@ -35,11 +40,11 @@ def store_predictions(predicted_soil_type, npk, soil_score, suitability_message,
 # Simulated user input function
 def get_user_input():
     return {
-        'Electrical Conductivity (dS/m)': 0.5,
-        'Moisture (%)': 19,
-        'pH': 6.2,
-        'Temperature (°C)': 20,
-        'Humidity (%)': 35
+        'Electrical Conductivity (dS/m)': 0.7,
+        'Moisture (%)': 6.8,
+        'pH': 5.1,
+        'Temperature (°C)': 18.37,
+        'Humidity (%)': 49
     }
 
 # Main function to run the entire analysis
@@ -82,5 +87,5 @@ def run_soil_analysis():
     print(f"Fertilizer Model Accuracy: {fertilizer_accuracy:.2%}")
 
 # Run the analysis
-if __name__ == "_main_":
+if __name__ == "__main__":
     run_soil_analysis()
