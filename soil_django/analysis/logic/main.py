@@ -1,6 +1,9 @@
 # analysis/logic/main.py
 import os
 import django
+import serial
+import time
+import json  # Added for Arduino JSON parsing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'soil_django.settings')
 django.setup()
@@ -37,8 +40,39 @@ def store_predictions(predicted_soil_type, npk, soil_score, suitability_message,
 
     print("Predicted data successfully stored in the database!")
 
-# Simulated user input function
+# ------------------- UPDATED get_user_input() -------------------
+# Arduino Serial Setup
+SERIAL_PORT = "COM7"  # Change if needed
+BAUD_RATE = 9600
+
+# Open serial port once (avoid opening multiple times)
+try:
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    time.sleep(2)  # Wait for Arduino to initialize
+    print(f"Connected to Arduino on {SERIAL_PORT}")
+except Exception as e:
+    ser = None
+    print(f"Failed to connect to Arduino: {e}")
+
 def get_user_input():
+    """Return live sensor data from Arduino if available, else default values"""
+    if ser and ser.in_waiting > 0:
+        try:
+            line = ser.readline().decode('utf-8').strip()
+            if line:
+                sensor_data = json.loads(line)
+                # Map Arduino keys to your expected keys
+                return {
+                    'Electrical Conductivity (dS/m)': 0.7,  # Keep default EC
+                    'Moisture (%)': sensor_data.get('Moisture', 6.8),
+                    'pH': 5.1,  # Keep default pH
+                    'Temperature (°C)': sensor_data.get('Temperature', 18.37),
+                    'Humidity (%)': sensor_data.get('Humidity', 49)
+                }
+        except Exception as e:
+            print(f"Error reading Arduino data: {e}")
+
+    # Fallback to defaults if no Arduino data
     return {
         'Electrical Conductivity (dS/m)': 0.7,
         'Moisture (%)': 6.8,
@@ -46,6 +80,7 @@ def get_user_input():
         'Temperature (°C)': 18.37,
         'Humidity (%)': 49
     }
+# -----------------------------------------------------------------
 
 # Main function to run the entire analysis
 def run_soil_analysis():

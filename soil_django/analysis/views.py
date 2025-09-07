@@ -52,7 +52,7 @@ import serial
 import time
 
 # Define the Serial Port and Baud Rate
-SERIAL_PORT = "COM3"  # Change for Linux: "/dev/ttyACM0"
+SERIAL_PORT = "COM7"  # Change for Linux: "/dev/ttyACM0"
 BAUD_RATE = 9600
 
 def get_arduino_data():

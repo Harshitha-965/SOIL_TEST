@@ -1,7 +1,7 @@
 import serial
 
 # Replace 'COM3' with your Arduino's COM port (Windows) or '/dev/ttyUSB0' (Linux/Mac)
-arduino_port = 'COM5'  
+arduino_port = 'COM7'  
 baud_rate = 9600  
 
 try:
