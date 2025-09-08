@@ -1,41 +1,150 @@
-/* static/css/style.css */
-
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #A7ECA7, #D4F4C6); /* Lighter green */
     color: #2c3e50;
+    overflow: hidden;
+}
+
+/* Main Container */
+.container {
+    max-width: 85vw;
+    padding: 30px;
     text-align: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
 }
 
-.result {
-    margin: 20px 0;
-    font-size: 18px;
+/* Header */
+.header {
+    margin-bottom: 30px;
 }
 
-.result strong {
+/* Logo Styling */
+.logo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* Maintains content visibility */
+    border: 3px solid #fff;
+    border-radius: 10px; /* Square but with soft edges */
+    display: block;
+    margin: 0 auto; /* Centers the logo */
+}
+
+/* Text Styles */
+h1 {
+    font-size: 3.5em;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+p {
+    font-size: 1.5em;
+    color: #fff;
+}
+
+/* Button */
+.button {
+    background-color: #FFD700;
+    color: #333;
+    padding: 20px 40px;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1.8em;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #FFA500;
+}
+
+.button:active {
+    background-color: #DAA520;
+}
+
+/* Footer */
+.footer {
+    margin-top: 30px;
+    font-size: 0.9em;
+}
+
+.footer a {
+    color: #00ddff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90vw;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2.5em;
+    }
+
+    p {
+        font-size: 1.2em;
+    }
+
+    .button {
+        font-size: 1.5em;
+        padding: 15px 30px;
+    }
+
+    .logo {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+
+/* For the contact form inputs */
+label {
+    color: #edebf1; /* Darker, more vibrant color */
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    display: block;
     font-weight: bold;
 }
 
-.canvas-container {
-    width: 50%; /* Adjust percentage for smaller or larger size */
-    height: 250px;
-    margin: 0 auto; /* Centers the graph */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333; /* Dark text for input */
 }
 
-canvas {
-    width: 100%; /* Makes the canvas take up 100% of the container */
-    height: 100%;
+textarea {
+    resize: vertical;
+}
+
+input[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #2980b9;
 }

@@ -42,7 +42,7 @@ def store_predictions(predicted_soil_type, npk, soil_score, suitability_message,
 
 # ------------------- UPDATED get_user_input() -------------------
 # Arduino Serial Setup
-SERIAL_PORT = "COM7"  # Change if needed
+SERIAL_PORT = "COM3"  # Change if needed
 BAUD_RATE = 9600
 
 # Open serial port once (avoid opening multiple times)

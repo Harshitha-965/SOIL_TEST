@@ -1,13 +1,14 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from analysis.logic.soil_analysis import predict_soil_type, predict_npk, calculate_soil_score, soil_suitability_message, predict_salinity
 from analysis.logic.crop_rec import get_crop_recommendation
 from analysis.logic.fertilizer import recommend_fertilizer
-from analysis.logic.main import get_user_input  # Import input function
+from analysis.logic.main import get_user_input  # Import the input function from main.py
 
-
+@csrf_exempt  # Disable CSRF protection for this view to allow Arduino data to be sent
 def soil_analysis_view(request):
-    # Get user input from main.py
-    user_input = get_user_input()
+    # Get user input from main.py (Arduino sensor data or default values)
+    user_input = get_user_input()  # This will fetch data from Arduino or use default if there's an issue
 
     # Step 1: Predict Soil Type
     predicted_soil_type = predict_soil_type(user_input)
@@ -28,8 +29,10 @@ def soil_analysis_view(request):
     # Step 6: Recommend Fertilizer
     recommended_fertilizer = recommend_fertilizer(user_input, predicted_soil_type, npk, salinity, recommended_crop)
 
-    # Prepare context data to send to template
-    
+    # Define soil suitability class (for color coding in the front-end)
+    soil_suitability_class = 'green' if soil_score > 70 else 'yellow' if soil_score > 40 else 'red'
+
+    # Prepare context data to pass to the template
     context = {
         'soil_type': predicted_soil_type,
         'npk': npk,
@@ -37,44 +40,18 @@ def soil_analysis_view(request):
         'soil_suitability': soil_suitability,
         'recommended_crop': recommended_crop,
         'recommended_fertilizer': recommended_fertilizer,
+        'soil_suitability_class': soil_suitability_class  # Include this for color coding
     }
 
-    # Render the template with context data
+    # Render the template with the context data
     return render(request, 'analysis/soil_analysis_output.html', context)
 
 def welcome(request):
     return render(request, 'analysis/welcome.html')
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-import serial
-import time
+def contact(request):
+    return render(request, 'analysis/contact.html')
 
-# Define the Serial Port and Baud Rate
-SERIAL_PORT = "COM7"  # Change for Linux: "/dev/ttyACM0"
-BAUD_RATE = 9600
-
-def get_arduino_data():
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        time.sleep(2)  # Wait for the connection to stabilize
-
-        if ser.in_waiting > 0:
-            data = ser.readline().decode('utf-8').strip()
-            print(f"Received Data: {data}")  # Debugging
-            sensor_data = json.loads(data)  # Convert JSON string to dictionary
-            return sensor_data
-    except Exception as e:
-        print(f"Error: {e}")
-
-    return None
-
-@csrf_exempt
-def fetch_sensor_data(request):
-    """API Endpoint to get real-time sensor data from Arduino"""
-    sensor_data = get_arduino_data()
-    if sensor_data:
-        return JsonResponse(sensor_data, safe=False)
-    else:
-        return JsonResponse({"error": "No data received"}, status=500)
+def start_analysis(request):
+    # This seems to be an extra function, you can either use it for an initial page or remove it
+    return render(request, 'analysis/soil_analysis_output.html')
