@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Analysis Input</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #2a7bff;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .data-list {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .data-list p {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        label {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        #start-analysis {
+            margin-top: 20px;
+            display: none;
+            font-size: 20px;
+        }
+
+        .image-container {
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="https://www.thespruce.com/thmb/VA7xpXC6WabuEfrZpJIPWVlOPHw=/4206x0/filters:no_upscale():max_bytes(150000):strip_icc()/healthy-soil-and-how-to-make-it-2539853-hero-fdf9b0280dca41cb8ae9614e6fc4a0b0.jpg" alt="Soil Analysis">
+        </div>
+
+        <h1>Enter Soil Data</h1>
+        
+        <div class="data-list" id="data-list">
+            <!-- Data from html_input() will be displayed here -->
+        </div>
+
+        <form id="soil-form">
+            <label for="user-input">Electrical Conductivity (dS/m):</label><br>
+            <input type="number" step="0.01" id="user-input" name="user-input" required><br>
+            <button type="submit" class="button">Submit</button>
+        </form>
+        
+        <a href="/soil-analysis/" class="button" id="start-analysis">Start Soil Analysis</a>
+    </div>
+
+    <script>
+        const htmlInputData = {
+            'Moisture (%)': 53.26,
+            'pH': 9.8,
+            'Temperature (°C)': 24.85,
+            'Humidity (%)': 72
+        };
+
+        const dataList = document.getElementById("data-list");
+
+        // Populate the data-list with the htmlInputData
+        Object.entries(htmlInputData).forEach(([key, value]) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = `${key}: ${value}`;
+            dataList.appendChild(paragraph);
+        });
+
+        const form = document.getElementById("soil-form");
+        const startAnalysisButton = document.getElementById("start-analysis");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent form refresh
+            const userInput = document.getElementById("user-input").value;
+
+            try {
+                const response = await fetch("/submit-soil-data/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken") // CSRF Token
+                    },
+                    body: JSON.stringify({ user_input: userInput })
+                });
+
+                if (response.ok) {
+                    // Show the "Start Analysis" button
+                    startAnalysisButton.style.display = "inline-block";
+                }
+            } catch (error) {
+                console.error("Error submitting data:", error);
+            }
+        });
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

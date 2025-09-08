@@ -1,9 +1,9 @@
 from django.urls import path
-from . import views
+from .views import soil_analysis_view, welcome, contact
 
 urlpatterns = [
-    path('', views.welcome, name='welcome'),  # Route for the welcome page
-    path('soil-analysis/', views.soil_analysis_view, name='soil_analysis'),  # URL for the soil analysis view
+    path('', welcome, name='welcome'),
+    path('soil-analysis/', soil_analysis_view, name='soil_analysis_view'),
+    path('contact/', contact, name='contact'),
 ]
-
 
