@@ -4,7 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 # Load dataset and prepare
-file_path = r"C:\Users\msvic\OneDrive\Desktop\SOIL_TEST\soil_django\analysis\data\updated_soil_data.csv"  # Update this path
+file_path = r"C:\Users\harsh\Documents\GitHub\SOIL_TEST\soil_django\analysis\data\updated_soil_data.csv"  # Update this path
 data = pd.read_csv(file_path)
 
 # Label encoding for crop type
